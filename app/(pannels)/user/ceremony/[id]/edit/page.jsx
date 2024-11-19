@@ -94,8 +94,6 @@ const DashboardPage = ({ params }) => {
             bride_groom: response?.data?.bride_groom ?? "",
             date: convertToGregorianDate(response?.data?.date) ?? "",
             address: response?.data?.address ?? "",
-            photo: response?.data?.photo ?? "",
-            weddingCard: response?.data?.wedding_card ?? "",
             has_gallery: response?.data?.has_gallery === 1 ? true : false,
             gifts_visible: response?.data?.gifts_visible === 1 ? true : false,
             has_online_gift: response?.data?.has_online_gift === 1 ? true : false,
@@ -145,11 +143,11 @@ const DashboardPage = ({ params }) => {
     }
 
     try {
-      const response = await axios.post(`/api/user/weddings/update/${1}`, formData, {
+      const response = await axios.post(`/api/user/weddings/update/${params.id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         toast.success(<ToastSuccess text={"با موفقیت ثبت شد."} />);
         reset();
       }
@@ -353,10 +351,21 @@ const DashboardPage = ({ params }) => {
                             {getValues("photo") && (
                               <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
                                 <Image
-                                  src={getValues("photo").startsWith('http') ? getValues("photo") : URL.createObjectURL(getValues("photo"))}
+                                  src={URL.createObjectURL(getValues("photo"))}
                                   className="aspect-video w-44 rounded-lg"
                                   width={240}
                                   height={160}
+                                  alt="alt"
+                                />
+                              </div>
+                            )}
+                             {data?.photo && (
+                              <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
+                                <Image
+                                  src={ data?.photo}
+                                  className="aspect-video w-32 rounded-lg"
+                                  width={120}
+                                  height={80}
                                   alt="alt"
                                 />
                               </div>
@@ -403,10 +412,21 @@ const DashboardPage = ({ params }) => {
                             {getValues("weddingCard") && (
                               <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
                                 <Image
-                                  src={getValues("weddingCard").startsWith('http') ? getValues("weddingCard") : URL.createObjectURL(getValues("weddingCard"))}
+                                  src={ URL.createObjectURL(getValues("weddingCard"))}
                                   className="aspect-video w-44 rounded-lg"
                                   width={240}
                                   height={160}
+                                  alt="alt"
+                                />
+                              </div>
+                            )}
+                             {data?.wedding_card && (
+                              <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
+                                <Image
+                                  src={ data?.wedding_card}
+                                  className="aspect-video w-32 rounded-lg"
+                                  width={120}
+                                  height={80}
                                   alt="alt"
                                 />
                               </div>

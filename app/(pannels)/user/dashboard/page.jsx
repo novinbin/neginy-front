@@ -103,7 +103,7 @@ const DashboardPage = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         toast.success(<ToastSuccess text={"با موفقیت ثبت شد."} />);
         reset();
       }
