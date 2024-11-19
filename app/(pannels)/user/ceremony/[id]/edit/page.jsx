@@ -31,9 +31,24 @@ import persian_fa from "react-date-object/locales/persian_fa";
 import { Checkbox } from "@/components/ui/checkbox";
 import { userGuestSchema } from "@/lib/validation/user/invite";
 import { defaultMessages } from "@/lib/default-messages";
+import DateObject from 'react-date-object';
 
-const DashboardPage = () => {
+
+const DashboardPage = ({ params }) => {
   const mount = useMount();
+
+
+  const convertToPersianDate = (dateString) => {
+    const date = new Date(dateString);
+    return new DateObject(date, { calendar: persian }).toString('YYYY/MM/DD');
+  };
+
+  // Function to convert a Persian date back to a Gregorian date
+  const convertToGregorianDate = (persianDate) => {
+    const dateObject = new DateObject(persianDate, { calendar: persian });
+    return dateObject.toDate(); // Converts to ISO string
+  };
+
 
   const form = useForm({
     resolver: zodResolver(userGuestSchema),
@@ -59,6 +74,49 @@ const DashboardPage = () => {
     formState: { isSubmitting },
   } = form;
 
+  const [data, setData] = useState({});
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    fetchDefaultData();
+  }, []);
+
+  const fetchDefaultData = async () => {
+    setIsLoading(true);
+    await axios
+      .get(`/api/user/weddings/edit/${params.id}`)
+      .then((response) => {
+        setData(response?.data);
+        console.log(response?.data)
+        reset(
+          {
+            bride_groom: response?.data?.bride_groom ?? "",
+            date: convertToGregorianDate(response?.data?.date) ?? "",
+            address: response?.data?.address ?? "",
+            photo: response?.data?.photo ?? "",
+            weddingCard: response?.data?.wedding_card ?? "",
+            has_gallery: response?.data?.has_gallery === 1 ? true : false,
+            gifts_visible: response?.data?.gifts_visible === 1 ? true : false,
+            has_online_gift: response?.data?.has_online_gift === 1 ? true : false,
+          }
+        )
+      })
+      .catch((error) => {
+        toast.error(
+          <ToastError
+            text={
+              error?.response?.data?.message ||
+              defaultMessages.errors.internalError
+            }
+          />,
+        );
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+
   const onSubmit = async (values) => {
     const {
       bride_groom,
@@ -73,7 +131,7 @@ const DashboardPage = () => {
 
     const formData = new FormData();
     formData.append("bride_groom", bride_groom);
-    formData.append("date", date);
+    formData.append("date", convertToPersianDate(date));
     formData.append("address", address);
     formData.append("gifts_visible", gifts_visible);
     formData.append("has_gallery", has_gallery);
@@ -87,7 +145,7 @@ const DashboardPage = () => {
     }
 
     try {
-      const response = await axios.post("/api/user/weddings/create", formData, {
+      const response = await axios.post(`/api/user/weddings/update/${1}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -295,7 +353,7 @@ const DashboardPage = () => {
                             {getValues("photo") && (
                               <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
                                 <Image
-                                  src={URL.createObjectURL(getValues("photo"))}
+                                  src={getValues("photo").startsWith('http') ? getValues("photo") : URL.createObjectURL(getValues("photo"))}
                                   className="aspect-video w-44 rounded-lg"
                                   width={240}
                                   height={160}
@@ -345,9 +403,7 @@ const DashboardPage = () => {
                             {getValues("weddingCard") && (
                               <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
                                 <Image
-                                  src={URL.createObjectURL(
-                                    getValues("weddingCard"),
-                                  )}
+                                  src={getValues("weddingCard").startsWith('http') ? getValues("weddingCard") : URL.createObjectURL(getValues("weddingCard"))}
                                   className="aspect-video w-44 rounded-lg"
                                   width={240}
                                   height={160}

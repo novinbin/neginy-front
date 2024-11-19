@@ -31,9 +31,21 @@ import persian_fa from "react-date-object/locales/persian_fa";
 import { Checkbox } from "@/components/ui/checkbox";
 import { userGuestSchema } from "@/lib/validation/user/invite";
 import { defaultMessages } from "@/lib/default-messages";
+import DateObject from "react-date-object";
 
 const DashboardPage = () => {
   const mount = useMount();
+
+  const convertToPersianDate = (dateString) => {
+    const date = new Date(dateString);
+    return new DateObject(date, { calendar: persian }).toString('YYYY/MM/DD');
+  };
+
+  // Function to convert a Persian date back to a Gregorian date
+  const convertToGregorianDate = (persianDate) => {
+    const dateObject = new DateObject(persianDate, { calendar: persian });
+    return dateObject.toDate().toISOString(); // Converts to ISO string
+  };
 
   const form = useForm({
     resolver: zodResolver(userGuestSchema),
@@ -73,7 +85,7 @@ const DashboardPage = () => {
 
     const formData = new FormData();
     formData.append("bride_groom", bride_groom);
-    formData.append("date", date);
+    formData.append("date", convertToPersianDate(date));
     formData.append("address", address);
     formData.append("gifts_visible", gifts_visible);
     formData.append("has_gallery", has_gallery);
