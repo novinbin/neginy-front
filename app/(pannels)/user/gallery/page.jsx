@@ -40,49 +40,18 @@ const UsersPage = () => {
 
 
 
-    const handleImageUpload = async (values) => {
-        const formData = new FormData();
-        values.images.forEach((img, index) => {
-            if (img.file) {
-                formData.append(`photo_${index}`, img.file);
-            }
-        });
-
-        try {
-            const response = await axios.post(
-                "/api/talar/business-info/photos",
-                formData,
-            );
-            if (response.status === 200) {
-                toast.success(<ToastSuccess text={"با موفقیت ثبت شد"} />);
-                reset();
-            }
-        } catch (error) {
-            toast.error(
-                <ToastError
-                    text={
-                        error?.response?.data?.message ||
-                        "خطای داخلی، لطفا دوباره تلاش کنید."
-                    }
-                />,
-            );
-        }
-    };
-
     const onSubmit = async (values) => {
         const formData = new FormData();
-        for (const [key, value] of Object.entries(values)) {
-            if (value !== null && value !== undefined) {
-                formData.append(key, value);
-            }
-        }
-
+    values.images.forEach((img, index) => {
+      if (img.file) {
+        formData.append(`photo_${index}`, img.file);
+      }
+    });
 
 
         try {
-            const response = await axios.post("/api/talar/business-info", formData);
+            const response = await axios.post("/api/user/weddings/create/gallery", formData);
             if (response.status === 200) {
-                await handleImageUpload(values);
                 toast.success(<ToastSuccess text={"با موفقیت ثبت شد"} />);
                 reset();
             }
