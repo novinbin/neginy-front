@@ -77,7 +77,7 @@ const DashboardPage = ({ }) => {
 
 
   const guestImg = [
-    { id: 1, img: weddingCard, link: "/" },
+    { id: 1, img: weddingCard, link: data1.card_photo ?? "" },
     { id: 2, img: listGifts, link: routes.weddingCard.gifts },
     { id: 3, img: gift, link: routes.weddingCard.bank },
     { id: 4, img: camera, link: routes.weddingCard.gallery.root },
@@ -90,7 +90,7 @@ const DashboardPage = ({ }) => {
         <div>
           <div className="flex items-center justify-center">
             <Image
-              src={data?.data?.photo}
+              src={data?.data?.photo ?? camera}
               alt="wedding img"
               width={480}
               height={360}
