@@ -8,6 +8,9 @@ import Link from "next/link";
 import { routes } from "@/routes/routes";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import ToastError from "@/components/toast/toast-error";
+import { axios } from "@/lib/axios";
 
 function PicVideo() {
 
@@ -28,7 +31,7 @@ function PicVideo() {
   const fetchWeddingGiftsCard = async () => {
 
     await axios
-      .get(`api/get/gifts/${search}?page=${searchParams.get("page") || 1}`)
+      .get(`api/get/gallery/${search}`)
       .then((response) => {
         setData2(response?.data);
         console.log("data2", response?.data)
