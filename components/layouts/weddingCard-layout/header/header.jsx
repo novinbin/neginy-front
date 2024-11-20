@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { navItems } from "../nav-items";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -38,6 +38,9 @@ import backImg from "@/public/img/svg-guest/backArrow.svg";
 const Header = () => {
   const userHook = useUser();
 
+  const searchParams = useSearchParams()
+  const search = searchParams.get('code')
+
   const router = useRouter();
   const pathname = usePathname();
 
@@ -53,7 +56,7 @@ const Header = () => {
 
   useEffect(() => {
     sheetRef?.current?.click();
-  }, [pathname]);
+  }, [pathname, searchParams]);
 
   const changeNavBg = () => {
     if (window.scrollY > 70) {
@@ -99,7 +102,7 @@ const Header = () => {
       <div className="mx-auto flex w-11/12 items-center justify-between">
         <div>
           <Link
-            href={routes.weddingCard.dashboard}
+            href="/"
             className="flex w-full items-center justify-center gap-2"
           >
             <Image
@@ -112,7 +115,7 @@ const Header = () => {
           </Link>
         </div>
 
-        <Link href={routes.weddingCard.dashboard}>
+        <Link href={`/wedding-card/dashboard?code=${search}`}>
           <Image
             src={backImg}
             width={360}

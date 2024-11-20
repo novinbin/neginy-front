@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
-import { signInSchema } from "@/lib/validation/auth/sign-in";
+import { giftSchema } from "@/lib/validation/auth/sign-in";
 import SubmitButton from "@/components/submit-button";
 import { useRouter } from "next/navigation";
 import { axios } from "@/lib/axios";
@@ -32,10 +32,13 @@ function GuestBank() {
   const router = useRouter();
 
   const form = useForm({
-    resolver: zodResolver(signInSchema),
+    resolver: zodResolver(giftSchema),
     defaultValues: {
+      firstName: "",
+      lastName: "",
+      fatherName: "",
       phone: "",
-      password: "",
+      gift: "",
     },
   });
 
@@ -46,49 +49,33 @@ function GuestBank() {
   } = form;
 
   const onSubmit = async (values) => {
-    const { password, phone } = values;
+    const { firstName,
+      lastName,
+      fatherName,
+      phone,
+      gif, } = values;
 
     const encodedFormData = querystring.stringify({
+      firstName,
+      lastName,
+      fatherName,
       phone,
-      password,
+      gif,
     });
 
-    await axios
-      .post("/login", encodedFormData)
-      .then(async (response) => {
-        if (response.status === 204 || response.status === 200) {
-          await axios.get("/api/self").then((res) => {
-            userHook.setUserData(res?.data?.data);
 
-            res.data?.data?.role === "talar" &&
-              router.push(routes.talar.dashboard);
-            res.data?.data?.role === "ceremony" &&
-              router.push(routes.ceremony.dashboard);
-            res.data?.data?.role === "studio" &&
-              router.push(routes.studio.dashboard);
-            res.data?.data?.role === "wedding_planer" &&
-              router.push(routes.weddingPlaner.dashboard);
-            res.data?.data?.role === "user" &&
-              router.push(routes.user.dashboard);
-            res.data?.data?.role === "admin" &&
-              router.push(routes.admin.dashboard);
+    const formData = new FormData();
+    formData.append("firstName", firstName);
+    formData.append("lastName", lastName);
+    formData.append("fatherName", fatherName);
+    formData.append("phone", phone);
+    formData.append("gif", gif);
 
-            toast.success(
-              <ToastSuccess text={defaultMessages.login.default} />,
-            );
-          });
-        }
-      })
-      .catch((error) => {
-        toast.error(
-          <ToastError
-            text={
-              error?.response?.data?.message ||
-              defaultMessages.errors.internalError
-            }
-          />,
-        );
-      });
+console.log(JSON.stringify(values))
+    const backend = process.env.NEXT_PUBLIC_API_URL;
+    const front = process.env.NEXT_PUBLIC_FRONT_URL;
+    const paymentUrl = `${backend}/api/pay/gift?url=${front}${"/"}&gift=${JSON.stringify(values)}`;
+    router.push(paymentUrl);
   };
   return (
     <div>
@@ -111,7 +98,7 @@ function GuestBank() {
             >
               <FormField
                 control={control}
-                name="name"
+                name="firstName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>نام : </FormLabel>
@@ -128,7 +115,7 @@ function GuestBank() {
               />
               <FormField
                 control={control}
-                name="name"
+                name="lastName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>نام خانوادگی : </FormLabel>
@@ -145,7 +132,7 @@ function GuestBank() {
               />
               <FormField
                 control={control}
-                name="name"
+                name="fatherName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>نام پدر :</FormLabel>
@@ -180,7 +167,7 @@ function GuestBank() {
               />
               <FormField
                 control={control}
-                name="phone"
+                name="gift"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>مبلغ هدیه (تومان) : </FormLabel>
