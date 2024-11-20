@@ -21,13 +21,20 @@ import { routes } from "@/routes/routes";
 import ToastSuccess from "@/components/toast/toast-success";
 import ToastError from "@/components/toast/toast-error";
 import { toast } from "sonner";
+import { z } from "zod";
+import { useRouter } from 'next/navigation'
 
 function GuestPage() {
   const mount = useMount();
+  const router = useRouter()
+
+
   const form = useForm({
-    resolver: zodResolver(userSchema),
+    resolver: zodResolver(z.object({
+      code: z.string().min(3, "کد حداقل سه کارکتر است")
+    })),
     defaultValues: {
-      name: "",
+      code: "",
     },
     mode: "onSubmit",
   });
@@ -42,59 +49,10 @@ function GuestPage() {
 
   const onSubmit = async (values) => {
     const {
-      name,
-      phone,
-      email,
-      state,
-      city,
-      national_code,
-      shaba_number,
-      password,
-      password_confirmation,
-      role,
+      code
     } = values;
 
-    const selectedCityName = cityName.find(
-      (cityItem) => cityItem.value === Number(city),
-    )?.name;
-
-    const selectedStateName = states.find(
-      (stateItem) => stateItem.id === Number(state),
-    )?.name;
-
-    const encodedFormData = querystring.stringify({
-      name,
-      phone,
-      email,
-      state: selectedStateName,
-      city: selectedCityName,
-      national_code,
-      shaba_number,
-      password,
-      password_confirmation,
-      role,
-    });
-
-    await axios
-      .post("/api/admin/users", encodedFormData)
-      .then((response) => {
-        if (response.status === 201) {
-          toast.success(
-            <ToastSuccess text={"کاربر جدید با موفقیت اضافه شد"} />,
-          );
-          reset();
-        }
-      })
-      .catch((error) => {
-        toast.error(
-          <ToastError
-            text={
-              error?.response?.data?.message ||
-              defaultMessages.errors.internalError
-            }
-          />,
-        );
-      });
+    router.push(`/wedding-card/dashboard?code=${code}`)
   };
 
   if (!mount) {
@@ -121,7 +79,7 @@ function GuestPage() {
 
             <FormField
               control={control}
-              name="name"
+              name="code"
               render={({ field }) => (
                 <FormItem className="">
                   <FormLabel>لطفا کد عروسی را وارد کنید.</FormLabel>

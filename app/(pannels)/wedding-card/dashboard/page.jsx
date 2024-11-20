@@ -8,10 +8,73 @@ import weddingCard from "@/public/img/svg-guest/wedding-card.svg";
 import Link from "next/link";
 import { MapPin } from "lucide-react";
 import { routes } from "@/routes/routes";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { axios } from "@/lib/axios";
+import { toast } from "sonner";
+import ToastError from "@/components/toast/toast-error";
+import { jaliliDate } from "@/lib/jalali-date";
+import { farsiNumber } from "@/lib/farsi-number";
 
-const DashboardPage = () => {
-  const searchParams = usePathname();
+const DashboardPage = ({ }) => {
+  const searchParams = useSearchParams()
+  const search = searchParams.get('code')
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState(false);
+  const [data1, setData1] = useState(false);
+
+
+  useEffect(() => {
+    fetchDefaultData();
+    fetchWeddingCard();
+  }, []);
+
+  const fetchDefaultData = async () => {
+    setIsLoading(true);
+    const formData = new FormData();
+    formData.append("code", search);
+
+    await axios
+      .post(`api/login-guest`, formData)
+      .then((response) => {
+        setData(response?.data);
+        console.log(response?.data)
+      })
+      .catch((error) => {
+        toast.error(
+          <ToastError
+            text={
+              'این مراسم به شما تعلق ندارد'
+            }
+          />,
+        );
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+  const fetchWeddingCard = async () => {
+
+    await axios
+      .get(`api/get/weddingCard/${search}`)
+      .then((response) => {
+        setData1(response?.data);
+        console.log(response?.data)
+      })
+      .catch((error) => {
+        toast.error(
+          <ToastError
+            text={
+              'این مراسم به شما تعلق ندارد'
+            }
+          />,
+        );
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+
 
   const guestImg = [
     { id: 1, img: weddingCard, link: "/" },
@@ -20,13 +83,14 @@ const DashboardPage = () => {
     { id: 4, img: camera, link: routes.weddingCard.gallery.root },
   ];
 
+
   return (
     <div className="">
       <div>
         <div>
           <div className="flex items-center justify-center">
             <Image
-              src={a}
+              src={data?.data?.photo}
               alt="wedding img"
               width={480}
               height={360}
@@ -55,22 +119,22 @@ const DashboardPage = () => {
             <div className="flex w-full flex-col items-center justify-center gap-9 max-lg:mt-20">
               <div className="flex flex-col items-center justify-center gap-3">
                 <p className="text-2xl font-bold">وصال</p>
-                <p className="text-xl">فاطمه رحمتی و محمد علیزاده</p>
+                <p className="text-xl">{data?.data?.bride_groom}</p>
               </div>
               <div className="flex flex-col items-center justify-center gap-3">
                 <p className="text-2xl font-bold">تاریخ </p>
-                <p className="text-xl">25 /شهریور ماه/ 1405</p>
+                <p className="text-xl">{farsiNumber(jaliliDate(data?.data?.date))}</p>
               </div>
               <div className="flex flex-col items-center justify-center gap-3">
                 <p className="text-2xl font-bold">تالار</p>
                 <div className="flex items-center justify-center gap-2">
                   <MapPin
-                
+
                     stroke="#C68E52"
                     className="size-7"
                   />
                   <p className="text-xl">
-                    باغ بهرامی بلوار امیر کبیر کوچه چهار
+                    {data?.data?.address}
                   </p>
                 </div>
               </div>
