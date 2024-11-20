@@ -80,7 +80,7 @@ const DashboardPage = ({ }) => {
     { id: 1, img: weddingCard, link: data1.card_photo ?? "" },
     { id: 2, img: listGifts, link: `/wedding-card/gifts?code=${search}` },
     { id: 3, img: gift, link: routes.weddingCard.bank },
-    { id: 4, img: camera, link: routes.weddingCard.gallery.root },
+    { id: 4, img: camera, link: `/wedding-card/gallery?code=${search}` },
   ];
 
 

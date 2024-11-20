@@ -490,6 +490,7 @@ const UserProfile = () => {
                   </FormItem>
                 )}
               />
+              
               <FormField
                 control={control}
                 name="profile_photo"

@@ -2,6 +2,7 @@ import { routes } from "@/routes/routes";
 import {
   Gem,
   Home,
+  Images,
   LayoutDashboard,
   MessageSquare,
   MessagesSquare,
@@ -22,6 +23,15 @@ export const navItems = [
     href: routes.user.dashboard,
     icon: (size, strokeWidth) => (
       <LayoutDashboard size={size || 18} strokeWidth={strokeWidth || 1.5} />
+    ),
+    subMenu: [],
+  },
+  {
+    title: "گالری عروسی",
+    type: "link",
+    href: "/user/gallery",
+    icon: (size, strokeWidth) => (
+      <Images size={size || 18} strokeWidth={strokeWidth || 1.5} />
     ),
     subMenu: [],
   },

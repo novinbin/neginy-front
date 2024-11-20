@@ -255,7 +255,8 @@ export const routes = {
       edit: (id) => `/user/reservation/${id}/edit`,
       details: (id) => `/user/reservation/${id}`,
     },
-    wedding :"/user/wedding"
+    wedding: "/user/wedding",
+    gallery: "/user/gallery"
 
   },
 
