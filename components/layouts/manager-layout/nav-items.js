@@ -149,22 +149,22 @@ export const navItems = [
       },
     ],
   },
-  {
-    title: "مدیریت متن کارت عروسی",
-    type: "subMenu",
-    icon: (size, strokeWidth) => (
-      <FileText size={size || 18} strokeWidth={strokeWidth || 1.5} />
-    ),
-    subMenu: [
-      {
-        title: "متن کارت عروسی",
-        href: routes.admin.weddingCardText.root,
-        icon: (size, strokeWidth) => (
-          <AlignRight size={size || 18} strokeWidth={strokeWidth || 1.5} />
-        ),
-      },
-    ],
-  },
+  // {
+  //   title: "مدیریت متن کارت عروسی",
+  //   type: "subMenu",
+  //   icon: (size, strokeWidth) => (
+  //     <FileText size={size || 18} strokeWidth={strokeWidth || 1.5} />
+  //   ),
+  //   subMenu: [
+  //     {
+  //       title: "متن کارت عروسی",
+  //       href: routes.admin.weddingCardText.root,
+  //       icon: (size, strokeWidth) => (
+  //         <AlignRight size={size || 18} strokeWidth={strokeWidth || 1.5} />
+  //       ),
+  //     },
+  //   ],
+  // },
   {
     title: "مدیریت محتوای اصلی",
     type: "subMenu",
